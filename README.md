@@ -22,7 +22,7 @@ The foundation of the agent is its knowledge graph. The process begins by feedin
 
 * **Data as "Episodes"**: In `llm_evolution.py` and `quickstart.py`, knowledge is represented as "episodes"—small, context-rich pieces of information in either text or JSON format.
 * **Graphiti Core Engine**: The `graphiti.add_episode()` function is the workhorse. It takes an episode and:
-    1.  Uses a "small" language model (e.g., `mistral:latest`) to extract key **entities** (like "GPT-4", "Anthropic") and the **relationships** between them.
+    1.  Uses a "small" language model (e.g., `qwen3:8b`) to extract key **entities** (like "GPT-4", "Anthropic") and the **relationships** between them.
     2.  Uses an embedding model (e.g., `nomic-embed-text`) to create vector embeddings for the text, enabling semantic search capabilities.
     3.  Constructs and stores these entities and relationships as nodes and edges in the Neo4j database. This creates a rich, interconnected web of knowledge.
 
@@ -46,26 +46,10 @@ The agent now has the raw, factual material it needs to construct a response.
 
 This entire loop ensures that the agent's responses are accurate, up-to-date, and directly traceable to the information stored in its knowledge base.
 
-## Setup and Installation
+## Neo4j Setup and Installation
 
-### 1. Clone the Repository
 
-```bash
-git clone [https://github.com/Shreyash-Gaur/Graphiti-RAG-Agent.git](https://github.com/Shreyash-Gaur/Graphiti-RAG-Agent.git)
-cd Graphiti-RAG-Agent
-```
-
-### 2. Python Environment
-
-It's recommended to use a virtual environment.
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-pip install -r requirements.txt
-```
-
-### 3. Neo4j (Knowledge Graph)
+### Neo4j (Knowledge Graph)
 
 The agent requires a running Neo4j instance to store its knowledge graph. The easiest way to get started is with Docker.
 
@@ -103,9 +87,13 @@ If you have already created the container, you can start it with:
 docker start neo4j-community
 ```
 
-You can access the Neo4j Browser at `http://localhost:7474`.
+You can access the Neo4j Browser at `http://localhost:7474`and login and run the following command to see the graph:
+```bash
+ MATCH (a)-[r]-(b)
+ RETURN a, r, b
+```
 
-### 4. Ollama (Local LLMs)
+### Ollama (Local LLMs)
 
 This project uses local LLMs via Ollama.
 
@@ -114,7 +102,6 @@ This project uses local LLMs via Ollama.
 
     ```bash
     ollama pull qwen3:8b
-    ollama pull mistral:latest
     ollama pull nomic-embed-text
     ```
 
@@ -140,11 +127,29 @@ python agent.py
 
 You can now ask questions related to the data you ingested. Try asking the same question after each phase of the evolution script to see how the agent's answers change!
 
-**Example Questions:**
+## Visualizing the Evolving Knowledge
 
-* "Which is the best LLM?"
-* "Tell me about Gemini 2.5 Pro."
-* "Are LLMs still relevant?" (After Phase 3)
+Here's how the knowledge graph looks and how the agent responds after each phase of the `llm_evolution.py` script.
+
+### Phase 1: Gemini 2.5 Pro is the Best
+
+![Alt text](assets/Phase_1.png)
+
+Initially, the graph contains information establishing Gemini 2.5 Pro as the top LLM.
+
+When asked "Which is the best LLM?", the agent correctly identifies Gemini 2.5 Pro based on the ingested facts.
+
+![Alt text](assets/Phase_1_Answer.png)
+
+### Phase 2: Claude 4 Emerges
+
+![Alt text](assets/Phase_2.png)
+
+New episodes are added that introduce Claude 4 and state that it has surpassed Gemini 2.5 Pro. The graph now includes conflicting information, but Graphiti's temporal awareness allows it to identify the most recent facts.
+
+Now, when asked "Which is the best LLM now?", the agent's answer changes, reflecting the latest information in the graph.
+
+![Alt text](assets/Phase_2_Answer.png)
 
 ## Project Structure
 
@@ -159,4 +164,4 @@ You can now ask questions related to the data you ingested. Try asking the same 
 * **Agent Framework**: `pydantic-ai`
 * **Database**: Neo4j
 * **LLMs & Embeddings**: Ollama
-* **Models Used**: `qwen3:8b`, `mistral:latest`, `nomic-embed-text`
+* **Models Used**: `qwen3:8b`, `nomic-embed-text`
