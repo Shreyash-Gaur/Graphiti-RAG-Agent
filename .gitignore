@@ -1,2 +1,66 @@
 .env
-/database
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data directories (raw input)
+data/
+*.pdf
+*.csv
+*.tsv
+*.txt
+
+# Vector stores & indexes
+backend/db/
+*.index
+*.faiss
+*.npz
+*.pkl
+*.jsonl
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Ollama cache (if any)
+ollama/
+ollama_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Chainlit
+.chainlit/
+chainlit.md
+chainlit_en-US.md
+!requirements.txt
